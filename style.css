@@ -1,0 +1,75 @@
+* {
+    box-sizing:border-box;
+}
+
+body {
+    background: #d8fbff;
+    font-size: 18px;
+}
+
+#todo-container {
+    max-width: 600px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 3px;
+    margin: 50px auto;
+    box-shadow: 1px 1px 4px 0px #f3f3;
+}
+
+.form-group {}
+
+.form-group label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.form-group input {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    border: 2px solid #222;
+}
+
+.action-btn-wrapper .submit-btn {
+    background: #1a7def;
+    color: #fff;
+    padding: 12px 25px;
+    border: 0 none;
+    font-size: 18px;
+    border-radius: 3px;
+}
+
+#todo {
+    margin: 0;
+    padding: 0 0 0 20px;
+}
+
+#todo li {
+    padding: 12px 20px 12px 0;
+    border-bottom: 1px dotted #000;
+    position: relative;
+}
+
+#todo li button {
+    background: #222;
+    color: #fff;
+    border: 0 none;
+    border-radius: 3px;
+    padding: 4px 10px;
+    position: absolute;
+    top: 12px;
+    right: 0;
+    cursor: pointer;
+}
+
+#todo li button.remove-btn {
+    background: #f75b5b;
+    right: 0;
+}
+
+#todo li button.edit-btn {
+    background: #efd826;
+    right: 71px;
+}

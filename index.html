@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <div id="todo-container">
+        <form action="" id="new-task">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" required />
+            </div>
+            <input type="hidden" name="id" id="id" />
+            <div class="action-btn-wrapper">
+                <button type="submit" class="submit-btn">New Task</button>
+            </div>
+        </form>
+
+        <ul id="todo">
+
+        </ul>
+
+    </div>
+    
+
+    <script>
+        //local storage object function
+        Storage.prototype.setObject = function(key, value) {
+            return this.setItem(key, JSON.stringify(value));
+        }
+
+        Storage.prototype.getObject = function(key) {
+            return JSON.parse(this.getItem(key));
+        }
+
+        // variables
+        const todo = document.querySelector("#todo");
+        const taskForm = document.querySelector("#new-task");
+        // const initTodoItems = [
+        //     {
+        //         id: 1,
+        //         name: "Task 1"
+        //     },
+        //     {
+        //         id: 2,
+        //         name: "Task 2"
+        //     },
+        //     {
+        //         id: 3,
+        //         name: "Task 3"
+        //     },
+        //     {
+        //         id: 4,
+        //         name: "Task 4"
+        //     },
+        // ];
+
+        const initTodoItems = [];
+
+
+        const _tasks = localStorage.getObject("tasks"); // null
+
+        const tasks = (_tasks !== null && _tasks.length ) ? _tasks : initTodoItems;
+
+        // create task and update one
+        taskForm.addEventListener("submit", function(event) {
+            const name = event.target.name;
+            const id = event.target.id;
+            if ( id.value.trim().length ) {
+                // update
+                updateTask({
+                    id: parseInt(id.value, 10),
+                    name: name.value
+                });
+            } else {
+                //create
+                saveNewTask({
+                    id : tasks.length > 0 ? new Date().getTime() : 1,
+                    name : name.value
+                });
+            }
+
+            renderTasks();
+            name.value = '';
+            name.id = '';
+        
+            event.preventDefault();
+        });
+
+        function updateTask(updateTask) {
+            // { id: 2232324, name: "updated name"}
+
+            const index = tasks.findIndex(function(task) {
+                return task.id === updateTask.id
+            });
+            
+            if ( index ) {
+                tasks[index].id = updateTask.id;
+                tasks[index].name = updateTask.name;
+                localStorage.setObject("tasks", tasks);
+            }
+
+        }
+
+
+        function saveNewTask(newTask) {
+                tasks.push(newTask);
+                localStorage.setObject("tasks", tasks);
+        }
+
+        
+        renderTasks();
+        function renderTasks() {
+            if ( tasks.length ) {
+            const fragment = new DocumentFragment();
+            todo.innerHTML = '';
+                tasks.forEach(function(task) {
+                    const li = document.createElement("li");
+                    li.textContent = task.name;
+
+                    li.appendChild(removeButton(task.id));
+                    li.appendChild(editButton(task.id));
+
+                    fragment.appendChild(li);
+                    
+                });
+
+                todo.appendChild(fragment);
+            }            
+        }
+
+
+        function removeButton(id) {
+            const button = document.createElement("button");
+            button.classList.add("remove-btn");
+            button.textContent = "remove";
+            button.setAttribute("data-id", id)
+
+            return button;
+        }
+
+        function editButton(id) {
+            const button = document.createElement("button");
+            button.classList.add("edit-btn");
+            button.textContent = "edit";
+            button.setAttribute("data-id", id)
+
+            return button;
+        }
+
+        //remove task
+        todo.addEventListener("click", function(event) {
+            if ( event.target.classList.contains('remove-btn') ) {
+                const selector = event.target;
+                const currentId = parseInt(selector.getAttribute("data-id"), 10);
+
+                const currentIndex = tasks.findIndex(function(task) {
+                    return task.id === currentId;
+                });
+
+                tasks.splice(currentIndex, 1)
+                localStorage.setObject("tasks", tasks);
+
+                selector.parentElement.remove();
+
+            }
+        });
+
+
+        //edit task
+        todo.addEventListener("click", function(event) {
+            if ( event.target.classList.contains('edit-btn') ) {
+                const selector = event.target;
+                const currentId = parseInt(selector.getAttribute("data-id"), 10);
+
+                const editTask = tasks.find(function(task) {
+                    return task.id === currentId;
+                });
+
+                taskForm.elements.name.value = editTask.name;
+                taskForm.elements.id.value = editTask.id;
+
+            }
+        });
+
+    </script>
+</body>
+</html>
